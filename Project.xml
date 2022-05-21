@@ -2,11 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="FNF: Kade Engine" file="KadeEngine" main="Main" version="1.0.1"
-	packageName="com.kadedev.kadeengine" package="com.kadedev.kadeengine" company="kadedev" />
-<!--NOTE: If you make a mod then be sure to change the package (NOT packageName)
-	otherwise the mod will be replace original kade engine port!
--->
+	<app title="Friday Night Funkin'" file="funkin" packageName="com.ninjamuffin99.funkin" package="com.ninjamuffin99.funkin" main="Main" version="0.2.8" company="ninjamuffin99" />
 
 	<!--Switch Export with Unique ApplicationID and Icon-->
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
@@ -14,10 +10,13 @@
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
 	<!-- <app preloader="Preloader" resizable="true" /> -->
-	<app preloader="flixel.system.FlxPreloader" />
+	<!--<app preloader="flixel.system.FlxPreloader" />-->
+	<app preloader="Preloader" />
 
 	<!--Minimum without FLX_NO_GAMEPAD: 11.8, without FLX_NO_NATIVE_CURSOR: 11.2-->
 	<set name="SWF_VERSION" value="11.8" />
+
+	<define name="mobileC" if="mobile" />
 
 	<!-- ____________________________ Window Settings ___________________________ -->
 
@@ -31,9 +30,7 @@
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" vsync="false"/>
 
 	<!--Mobile-specific-->
-	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" resizable="false"/>
-	<define name="mobileC" if="mobile" />
-	<assets path="assets/shared/images/hitbox" if="mobile"/>
+	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" resizable="false" />
 
 	<!--Switch-specific-->
 	<window if="switch" orientation="landscape" fullscreen="true" width="0" height="0" resizable="true" />
@@ -46,11 +43,14 @@
 
 	<classpath name="source" />
 
+	<assets path="assets/android"/>
+	<assets path="assets/shared/images/hitbox"/>
+
 	<assets path="assets/preload" rename="assets" exclude="*.ogg" if="web"/>
 	<assets path="assets/preload" rename="assets" exclude="*.mp3" unless="web"/>
 	
 	<!-- <define name="PRELOAD_ALL" /> -->
-	<define name="PRELOAD_ALL" unless="web"/>
+	<define name="PRELOAD_ALL" unless="web" />
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
 	
 	<section if="PRELOAD_ALL">
@@ -63,6 +63,7 @@
 		<library name="week4"    preload="true" />
 		<library name="week5"    preload="true" />
 		<library name="week6"    preload="true" />
+		<library name="week7"    preload="true" />
 	</section>
 	
 	<section if="NO_PRELOAD_ALL">
@@ -75,6 +76,7 @@
 		<library name="week4"    preload="false" />
 		<library name="week5"    preload="false" />
 		<library name="week6"    preload="false" />
+		<library name="week7"    preload="false" />
 	</section>
 	
 	<assets path="assets/songs"    library="songs"    exclude="*.ogg" if="web"/>
@@ -95,13 +97,13 @@
 	<assets path="assets/week5"    library="week5"    exclude="*.mp3" unless="web"/>
 	<assets path="assets/week6"    library="week6"    exclude="*.ogg" if="web"/>
 	<assets path="assets/week6"    library="week6"    exclude="*.mp3" unless="web"/>
+	<assets path="assets/week7"    library="week7"    exclude="*.mp3" unless="web"/>
 	
-	<!-- <assets path='example_mods' rename='mods' embed='false'/> -->
-	<assets path='art/readme.txt' rename='do NOT readme.txt' /> 
-	<assets path='LICENSE' rename='LICENSE.txt' />
+	<assets path='example_mods' rename='mods' embed='false'/>
+	<assets path='art/readme.txt' rename='do NOT readme.txt' />
 	<!-- <template path='mods' /> -->
 	
-	<!-- <assets path="CHANGELOG.md" rename='changelog.txt'/> -->
+	<assets path="CHANGELOG.md" rename='changelog.txt'/>
 
 	<!-- NOTE FOR FUTURE SELF SINCE FONTS ARE ALWAYS FUCKY 
 		TO FIX ONE OF THEM, I CONVERTED IT TO OTF. DUNNO IF YOU NEED TO
@@ -118,17 +120,14 @@
 	<haxelib name="flixel-addons" />
 	<haxelib name="hscript" />
 
-	<!-- <haxelib name="actuate" /> -->
-	<!-- <haxelib name="extension-webm"/> --> <!-- Make sure to use https://github.com/KadeDev/extension-webm/ -->
-
 	<!--In case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
-	<haxelib name="newgrounds" unless="mobile"/>
+	<haxelib name="newgrounds" unless='mobile'/>
 	<haxelib name="faxe" if='switch'/>
-	<!-- <haxelib name="polymod"/> -->
-	<haxelib name="discord_rpc" if="windows"/>
-	<haxelib name="linc_luajit" if="windows"/>
-
+	<haxelib name="polymod"/>
+	<haxelib name="discord_rpc" if="desktop"/>
+	<haxelib name="extension-webm" unless="html5" />
+	<!-- <haxelib name="extension-webview" if="mobile"/> -->
 	<!-- <haxelib name="hxcpp-debug-server" if="desktop"/> -->
 
 	<!-- <haxelib name="markdown" /> -->
@@ -164,22 +163,18 @@
 	<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />
 
 	<!--Disable the Flixel core debugger. Automatically gets set whenever you compile in release mode!-->
-	<haxedef name="FLX_NO_DEBUG"/>
+	<haxedef name="FLX_NO_DEBUG" unless="debug" />
 
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
-	<haxedef name="NAPE_RELEASE_BUILD"/>
+	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
 
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
 	
-	<icon path="art/icon8.png" size='8'/>
 	<icon path="art/icon16.png" size='16'/>
 	<icon path="art/icon32.png" size='32'/>
 	<icon path="art/icon64.png" size='64'/>
-	<icon path="art/icon128.png" size='128'/>
-	<icon path="art/icon256.png" size='256'/>
-	<icon path="art/icon512.png" size='512'/>
 	<icon path="art/iconOG.png" />
 
 
